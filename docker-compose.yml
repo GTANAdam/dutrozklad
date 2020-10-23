@@ -1,0 +1,17 @@
+version: '2.2'
+services:
+  dutrozkladbot: 
+    image: dutrozkladbot:latest
+    container_name: dutrozkladbot
+    restart: unless-stopped
+    volumes:
+      - /srv/dutrozklad/data:/data
+
+  dutrozkladapi:
+    image: dutrozkladapi:latest
+    container_name: dutrozkladapi
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - /srv/dutrozklad/data:/data

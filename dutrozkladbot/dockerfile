@@ -1,0 +1,33 @@
+FROM scratch 
+COPY ./build / 
+ENTRYPOINT ["/dutrozkladbot"] 
+
+FROM alpine:latest as builder
+
+ARG TZ='Europe/Kiev'
+ENV DEFAULT_TZ ${TZ}
+
+RUN apk --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community add go musl-dev git ca-certificates
+RUN apk add -U tzdata && cp /usr/share/zoneinfo/${DEFAULT_TZ} /etc/localtime
+
+WORKDIR /root/go/src/dutrozkladbot
+
+# Get dependencies and copy source
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# Copy src code
+COPY ./ ./
+
+RUN go version
+
+# RUN go get -d ./...
+# The -w turns off DWARF debugging information
+# The -s turns off generation of the Go symbol table
+RUN CGO_ENABLED=1 go build -ldflags "-linkmode external -extldflags '-static -w -s'" main.go
+
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /root/go/src/dutrozkladbot/main /app/main
+ENTRYPOINT ["/app/main"]
