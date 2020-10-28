@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 	"unicode"
 )
 
@@ -62,4 +63,31 @@ func SaveToJSON(data interface{}, filename string) {
 		log.Println("Error saving to json file.", err)
 		return
 	}
+}
+
+// FormatSince ..
+func FormatSince(t time.Time) string {
+	const (
+		Decisecond = 100 * time.Millisecond
+		Day        = 24 * time.Hour
+	)
+
+	ts := time.Since(t)
+	sign := time.Duration(1)
+
+	if ts < 0 {
+		sign = -1
+		ts = -ts
+	}
+
+	ts += +Decisecond / 2
+	d := sign * (ts / Day)
+	ts = ts % Day
+	h := ts / time.Hour
+	ts = ts % time.Hour
+	m := ts / time.Minute
+	ts = ts % time.Minute
+	s := ts / time.Second
+
+	return fmt.Sprintf("%dd%dh%dm%ds", d, h, m, s)
 }

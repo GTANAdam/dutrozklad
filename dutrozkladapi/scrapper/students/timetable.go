@@ -20,8 +20,16 @@ func GetTimeTable(faculty, course, group, date1, date2 string) ([]*models.TimeTa
 
 	// Return from local database
 	if exists, fac, cou := recordExists(group, date1, date2); exists {
+		header.StatsMutex.Lock()
+		header.Stats.Cached++
+		header.StatsMutex.Unlock()
+
 		return returnOnlyRequestedDates(header.Faculties[fac].Courses[cou].Groups[group].TimeTable, date1, date2), nil
 	}
+
+	header.StatsMutex.Lock()
+	header.Stats.Uncached++
+	header.StatsMutex.Unlock()
 
 	// Get from server
 	data, err := getAllTimeTables(faculty, course, group, time.Now().Format("02.01.2006"), time.Now().AddDate(1, 0, 0).Format("02.01.2006"))

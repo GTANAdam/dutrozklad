@@ -122,3 +122,7 @@ func CountTotalTeachers() int {
 
 	return teachersCount
 }
+
+func Stats(c *gin.Context) {
+	RespondJSON(c, 200, nil, header.Stats)
+}

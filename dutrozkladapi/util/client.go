@@ -1,3 +1,4 @@
+// Package util ..
 package util
 
 import (
@@ -9,6 +10,7 @@ import (
 	"time"
 )
 
+// Get ..
 func Get(url string) io.ReadCloser {
 	// defer TimeTrack(time.Now(), "GET")
 
@@ -45,7 +47,7 @@ func Post(url string, values url.Values) (io.ReadCloser, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Status code error: %d, response: %s", resp.StatusCode, resp.Status)
+		return nil, fmt.Errorf("status code error: %d, response: %s", resp.StatusCode, resp.Status)
 	}
 
 	return resp.Body, nil

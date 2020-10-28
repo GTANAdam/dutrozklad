@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+// get ..
 func get(url string) (io.ReadCloser, error) {
 	// Create HTTP client with timeout
 	client := &http.Client{
@@ -38,7 +39,7 @@ func get(url string) (io.ReadCloser, error) {
 func process(response *io.ReadCloser) *model.Response {
 	body, err := ioutil.ReadAll(*response)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
 		return nil
 	}
 
@@ -53,6 +54,10 @@ func process(response *io.ReadCloser) *model.Response {
 }
 
 func query(str string) (*model.Response, error) {
+	config.MutexStats.Lock()
+	config.Stats.Queries++
+	config.MutexStats.Unlock()
+
 	response, err := get(str)
 	if err != nil {
 		return nil, err

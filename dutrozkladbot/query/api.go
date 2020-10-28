@@ -4,6 +4,7 @@ package query
 import (
 	"dutrozkladbot/config"
 	"dutrozkladbot/model"
+	"encoding/json"
 	"fmt"
 )
 
@@ -25,4 +26,19 @@ func GetGroups(faculty, course int) (*model.Response, error) {
 // GetTimeTable ..
 func GetTimeTable(group int, date string) (*model.Response, error) {
 	return query(fmt.Sprintf("%s/timetable/%v/%s/%s", config.APIAddress, group, date, date))
+}
+
+// GetStats ..
+func GetStats() (*model.StatsResponse, error) {
+	stuff, err := query(fmt.Sprintf("%s/stats", config.APIAddress))
+	if err != nil {
+		return nil, err
+	}
+
+	var result model.StatsResponse
+	if err := json.Unmarshal(stuff.Data, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }

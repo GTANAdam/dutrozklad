@@ -23,6 +23,10 @@ GET http://127.0.0.1:9090/api/v1/kafedras
 GET http://127.0.0.1:9090/api/v1/teachers?kafedra=13
 #####
 
+// Get Stats
+GET http://127.0.0.1:9090/api/v1/stats
+#####
+
 // Get TeacherTimeTable
 POST http://127.0.0.1:9090/api/v1/teachertimetable
 Content-Type: application/x-www-form-urlencoded

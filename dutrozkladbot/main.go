@@ -22,13 +22,13 @@ func main() {
 
 	if runtime.GOOS == "windows" {
 		config.Token = config.Config.Token.Development
-		config.APIAddress = config.Config.Token.Development
+		config.APIAddress = config.Config.APIAddress.Development
 	} else {
 		config.Token = config.Config.Token.Production
-		config.APIAddress = config.Config.Token.Production
+		config.APIAddress = config.Config.APIAddress.Production
 	}
 
-	log.Println("DUTRozkladBOT init..")
+	log.Println("init program..")
 
 	debug := flag.Bool("debug", false, "Enables debug mode, shows more verbosity")
 	flag.Parse()
@@ -45,7 +45,7 @@ func main() {
 
 	bot, err := tgbotapi.NewBotAPI(config.Token)
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
 	}
 
 	bot.Debug = *debug
@@ -58,23 +58,24 @@ func main() {
 
 	updates, err := bot.GetUpdatesChan(u)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 	}
 
 	for update := range updates {
 		if update.Message != nil {
-			go func(*tgbotapi.Update) {
-				// if update.Message.Text[0] == '/' {
-				// 	controllers.ProcessCommand(update)
-				// 	return
-				// }
-			}(&update)
+			config.MutexStats.Lock()
+			config.Stats.Messages++
+			config.MutexStats.Unlock()
 
-			go helpers.SendDefaultMessage(update.Message.Chat.ID)
+			if update.Message.Text[0] == '/' {
+				go controllers.ProcessCommand(&update, update.Message.Text[1:])
+			} else {
+				go helpers.SendDefaultMessage(update.Message.Chat.ID)
+			}
 		}
 
 		if update.CallbackQuery != nil {
-			go controllers.ProcessQueryCallback(update)
+			go controllers.ProcessQueryCallback(&update)
 		}
 	}
 }

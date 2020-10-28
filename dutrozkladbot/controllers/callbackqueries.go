@@ -15,7 +15,11 @@ import (
 )
 
 // ProcessQueryCallback ..
-func ProcessQueryCallback(update tgbotapi.Update) {
+func ProcessQueryCallback(update *tgbotapi.Update) {
+
+	config.MutexStats.Lock()
+	config.Stats.Callbacks++
+	config.MutexStats.Unlock()
 
 	// Show typing status
 	chataction := tgbotapi.NewChatAction(update.CallbackQuery.Message.Chat.ID, tgbotapi.ChatTyping)

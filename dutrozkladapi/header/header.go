@@ -28,3 +28,6 @@ var Faculties = make(map[string]*models.Faculty)
 var Kafedras = make(map[string]*models.Kafedra)
 var Regex, _ = regexp.Compile(`var arr=(.*);`)
 var Mutex = &sync.Mutex{}
+
+var StatsMutex = &sync.Mutex{}
+var Stats = &models.Stats{}

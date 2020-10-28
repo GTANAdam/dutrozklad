@@ -70,6 +70,8 @@ func main() {
 
 			v1.GET("/timetable/:group/:startdate/:enddate", router.GetTimeTable)
 			// v1.POST("/teachertimetable", router.GetTeacherTimeTable)
+
+			v1.GET("/stats", util.Stats)
 		}
 	}
 
