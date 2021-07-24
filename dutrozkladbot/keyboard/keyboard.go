@@ -22,6 +22,11 @@ var MainMenu = tgbotapi.NewInlineKeyboardMarkup(
 	),
 )
 
+// Main ..
+// var Main = tgbotapi.NewReplyKeyboard(
+// 	tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButton("Menu")),
+// )
+
 // TimeTableMenu ..
 func TimeTableMenu(key string) *tgbotapi.InlineKeyboardMarkup {
 	if key == "" {

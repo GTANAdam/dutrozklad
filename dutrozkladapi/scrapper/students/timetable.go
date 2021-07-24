@@ -99,7 +99,7 @@ func returnOnlyRequestedDates(arr []*models.TimeTable, date1, date2 string) []*m
 
 	for i := range arr {
 		// API inconsistency: Datetime returned as 2020-10-19 whereas the request is submitted as 19.10.2020
-		if dWR, _ := dateWithinRange(arr[i].Date, "2006-01-02", date1, date2, "02.01.2006"); dWR {
+		if dWR, _ := util.DateWithinRange(arr[i].Date, "2006-01-02", date1, date2, "02.01.2006"); dWR {
 			result = append(result, arr[i])
 		}
 	}
@@ -159,7 +159,7 @@ func recordExists(group, date1, date2 string) (bool, string, string) {
 
 					for _, table := range g.TimeTable {
 						// API inconsistency: Datetime returned as 2020-10-19 whereas the request is submitted as 19.10.2020
-						if dWR, _ := dateWithinRange(table.Date, "2006-01-02", date1, date2, "02.01.2006"); dWR {
+						if dWR, _ := util.DateWithinRange(table.Date, "2006-01-02", date1, date2, "02.01.2006"); dWR {
 							return true, fI, cI
 						}
 					}
@@ -171,16 +171,4 @@ func recordExists(group, date1, date2 string) (bool, string, string) {
 END:
 	// TODO: Check if no such date
 	return false, "", ""
-}
-
-func dateWithinRange(dateStr, dateFormat, date1Str, date2Str, date12Format string) (bool, error) {
-	dateStamp, _ := time.Parse(dateFormat, dateStr)
-	date1Stamp, _ := time.Parse(date12Format, date1Str)
-	date2Stamp, _ := time.Parse(date12Format, date2Str)
-
-	if dateStamp.Equal(date1Stamp) || dateStamp.After(date1Stamp) && dateStamp.Before(date2Stamp) || dateStamp.Equal(date2Stamp) {
-		return true, nil
-	}
-
-	return false, nil
 }

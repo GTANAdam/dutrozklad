@@ -10,8 +10,7 @@ import (
 
 // SendDefaultMessage ..
 func SendDefaultMessage(chatID int64) {
-	msg := tgbotapi.NewMessage(chatID, config.DefaultMessage())
+	msg := tgbotapi.NewMessage(chatID, config.DefaultMessage)
 	msg.ReplyMarkup = keyboard.MainMenu
-
 	config.Bot.Send(msg)
 }

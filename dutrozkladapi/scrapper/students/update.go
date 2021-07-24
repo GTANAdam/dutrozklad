@@ -17,8 +17,8 @@ var hResult = make(map[string]*models.Faculty)
 var totalGroups int
 var failedParse int
 
-// UpdateFacultiesAsync ..
-func UpdateFacultiesAsync() {
+// UpdateFaculties ..
+func UpdateFaculties() {
 	// Get faculties listing
 	faculties, err := GetFaculties()
 	if err != nil {
@@ -29,28 +29,18 @@ func UpdateFacultiesAsync() {
 	hResult = faculties
 
 	for facultyID := range faculties {
-		courses := getCourses(facultyID)
+		for _, courseID := range getCourses(facultyID) {
 
-		// Goroutine faculties to get courses
-		go func(facultyID string) {
-			for _, courseID := range courses {
+			groups := getGroups(facultyID, courseID)
+			wg.Add(len(groups))
 
-				groups := getGroups(facultyID, courseID)
-				wg.Add(len(groups))
-
-				// Goroutine courses to get groups
-				go func(courseID string) {
-					for groupID := range groups {
-						// Goroutine groups
-						go getTimeTables(facultyID, courseID, groupID)
-					}
-				}(courseID)
-
+			for groupID := range groups {
+				go getTimeTables(facultyID, courseID, groupID)
 			}
-		}(facultyID)
-
+		}
 	}
 
+	// Wait for all timetables to finish fetching
 	wg.Wait()
 
 	// Save to global data

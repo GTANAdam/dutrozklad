@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"log"
-	"runtime"
 
 	config "dutrozkladbot/config"
 	"dutrozkladbot/controllers"
@@ -20,18 +19,18 @@ func main() {
 	log.Println("Config init..")
 	util.LoadConfig(config.Config)
 
-	if runtime.GOOS == "windows" {
+	log.Println("init program..")
+
+	debug := flag.Bool("debug", false, "Enables debug mode, shows more verbosity")
+	flag.Parse()
+
+	if *debug {
 		config.Token = config.Config.Token.Development
 		config.APIAddress = config.Config.APIAddress.Development
 	} else {
 		config.Token = config.Config.Token.Production
 		config.APIAddress = config.Config.APIAddress.Production
 	}
-
-	log.Println("init program..")
-
-	debug := flag.Bool("debug", false, "Enables debug mode, shows more verbosity")
-	flag.Parse()
 
 	// util.LoadUsersFromJSON()
 
@@ -63,13 +62,15 @@ func main() {
 
 	for update := range updates {
 		if update.Message != nil {
-			config.MutexStats.Lock()
-			config.Stats.Messages++
-			config.MutexStats.Unlock()
 
-			if update.Message.Text[0] == '/' {
-				go controllers.ProcessCommand(&update, update.Message.Text[1:])
+			if cmd := update.Message.Command(); cmd != "" {
+				go controllers.ProcessCommand(&update, cmd)
+
 			} else {
+				config.MutexStats.Lock()
+				config.Stats.Messages++
+				config.MutexStats.Unlock()
+
 				go helpers.SendDefaultMessage(update.Message.Chat.ID)
 			}
 		}

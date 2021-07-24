@@ -126,3 +126,15 @@ func CountTotalTeachers() int {
 func Stats(c *gin.Context) {
 	RespondJSON(c, 200, nil, header.Stats)
 }
+
+func DateWithinRange(dateStr, dateFormat, date1Str, date2Str, date12Format string) (bool, error) {
+	dateStamp, _ := time.Parse(dateFormat, dateStr)
+	date1Stamp, _ := time.Parse(date12Format, date1Str)
+	date2Stamp, _ := time.Parse(date12Format, date2Str)
+
+	if dateStamp.Equal(date1Stamp) || dateStamp.After(date1Stamp) && dateStamp.Before(date2Stamp) || dateStamp.Equal(date2Stamp) {
+		return true, nil
+	}
+
+	return false, nil
+}

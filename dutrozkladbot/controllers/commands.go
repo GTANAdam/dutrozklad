@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"dutrozkladbot/config"
+	"dutrozkladbot/helpers"
 	"dutrozkladbot/model"
 	"dutrozkladbot/query"
 	"dutrozkladbot/util"
@@ -39,5 +40,7 @@ func ProcessCommand(update *tgbotapi.Update, cmd string) {
 
 			config.Bot.Send(msg)
 		}
+	default:
+		helpers.SendDefaultMessage(update.Message.Chat.ID)
 	}
 }

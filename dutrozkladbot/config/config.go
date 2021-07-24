@@ -44,7 +44,7 @@ func Init() {
 
 	var err error
 	DB, err = gorm.Open(sqlite.Open("data/database.db"), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Info), // Info
 	})
 
 	if err != nil {

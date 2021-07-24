@@ -26,7 +26,7 @@ func main() {
 
 	// Scrap faculties data if it doesn't exist otherwise load the file
 	if _, err := os.Stat("data/faculties.json"); os.IsNotExist(err) || *update {
-		students.UpdateFacultiesAsync()
+		students.UpdateFaculties()
 	} else {
 		util.LoadFaculties()
 	}
